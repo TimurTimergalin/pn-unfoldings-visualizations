@@ -1,0 +1,61 @@
+#side-page {
+    position: fixed;
+    height: calc((100% - 100px) * 0.6);
+    top: calc(100px + (100% - 100px) * 0.2);
+    width: 400px;
+    left: -800px;
+    transition: left 400ms;
+
+    background-color: #ff9f9b;
+
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+#side-page button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    display: flex;
+    width: 60px;
+    height: 60px;
+
+    background: none;
+    border: none;
+    outline: none;
+}
+
+#side-page button img {
+    width: 100%;
+    height: auto;
+    margin: auto;
+}
+
+#legend {
+    margin-left: 50px;
+    display: flex;
+    flex-direction: column;
+    /*padding-top: 10%;*/
+    /*padding-bottom: 10%;*/
+    height: 100%;
+}
+
+.legend-entry {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+}
+
+.legend-entry span {
+    border: 1px solid #333;
+    width: 60px;
+    margin-right: 20px;
+}
+
+.legend-entry p {
+    color: white;
+    margin-top: auto;
+    margin-bottom: auto;
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prefix</title>
+    <link rel="stylesheet" type="text/css" href="workspace.css">
+    <link rel="stylesheet" type="text/css" href="top_bar.css">
+    <link rel="stylesheet" type="text/css" href="side_page.css">
+</head>
+<body>
+<div id="workspace">
+    <!--REPLACE ME-->
+</div>
+</body>
+<div id="top-bar">
+    <div style="flex: 1"></div>
+    <div id="top-bar-buttons">
+        <button id="restart" disabled>
+            <img src="restart.svg" alt="Restart">
+        </button>
+        <button id="previous" disabled>
+            <img src="previous.svg" alt="Previous">
+        </button>
+        <button id="next" disabled>
+            <img src="next.svg" alt="Next">
+        </button>
+        <button id="skip" disabled>
+            <img src="skip.svg" alt="Skip">
+        </button>
+    </div>
+    <div style="flex: 1"></div>
+</div>
+<div id="side-page">
+    <button id="back" onclick="document.querySelector('#side-page').style.left = '-400px'; clear_fill()">
+        <img src="back.svg" alt="Back">
+    </button>
+    <div id="legend">
+        <div class="legend-entry"><span style="background-color: #fffea3"></span><p>Выбранный элемент</p></div>
+        <div class="legend-entry"><span style="background-color: #d0bbff"></span><p>Идут до</p></div>
+        <div class="legend-entry"><span style="background-color: #fab0e4"></span><p>Идут после</p></div>
+        <div class="legend-entry"><span style="background-color: #ff5751"></span><p>Конфликтуют</p></div>
+        <div class="legend-entry"><span style="background-color: #8de5a1"></span><p>Конкурируют</p></div>
+    </div>
+</div>
+<script src="view_box_control.js"></script>
+<script src="ripple.js"></script>
+<script src="rewind.js"></script>
+<script src="relations.js"></script>
+</html>
