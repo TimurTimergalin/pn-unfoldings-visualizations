@@ -2,6 +2,6 @@
 <svg width="235" height="235" xmlns="http://www.w3.org/2000/svg">
     <g transform="scale(-1,1) translate(-235, 0)">
         <path d="M17.5 0 L217.5 117.5 L17.5 235 z" stroke="white" fill="white"/>
-        <path d="M217.5 0 V 235" stroke="white" stroke-width="20"/>
+        <path d="M217.5 30 V 205" stroke="white" stroke-width="20"/>
     </g>
 </svg>

@@ -1,209 +1,286 @@
-let specs;
-const svg = document.querySelector("#prefix")
-const workspace = document.querySelector("#workspace")
+class ViewBoxController {
+    svg;
+    workspace;
 
-const offset = svg.viewBox.baseVal.width * 0.3;
+    globalViewBox;
 
-function applyOffset() {
-    let box = svg.viewBox.baseVal
-    svg.setAttribute("viewBox",
-        (box.x - offset) + " " +
-        (box.y - offset) + " " +
-        (box.width + 2 * offset) + " " +
-        (box.height + 2 * offset)
-    )
+    currentScale = 1
+    mouseDown = false
+    fixedPoint = null
+
+    get minScale() {
+        return 0.1
+    }
+
+    get maxScale() {
+        return 1
+    }
+
+    get OnKeyMoveX() {
+        return this.globalViewBox.width / 20
+    }
+
+    get OnKeyMoveY() {
+        return this.globalViewBox.height / 20
+    }
+
+    get OnKeyScale() {
+        return 0.1
+    }
+
+    constructor(workspace) {
+        this.workspace = workspace
+        this.svg = workspace.querySelector("svg")
+        this.setGlobalViewBox()
+        this.setControlEvents()
+
+        this.setHoverEvents()
+    }
+
+    setControlEvents() {
+        const workspace = this.workspace
+        workspace.addEventListener("keydown", ev => this.keydownListener(ev))
+        workspace.addEventListener("wheel", ev => this.wheelListener(ev))
+        workspace.addEventListener("mousedown", ev => this.mousedownListener(ev))
+        workspace.addEventListener("mouseup", ev => this.mouseupListener(ev))
+        workspace.addEventListener("mousemove", ev => this.mousemoveListener(ev))
+    }
+
+    setHoverEvents() {
+        const workspace = this.workspace
+        this.svg.addEventListener("mouseenter", () => workspace.focus())
+        workspace.addEventListener("mouseenter", () => workspace.focus())
+        const mouseoutListener = () => {
+            workspace.blur()
+            workspace.dispatchEvent(new MouseEvent("mouseup"))
+        }
+        this.svg.addEventListener("mouseleave", mouseoutListener)
+        workspace.addEventListener("mouseleave", mouseoutListener)
+    }
+
+    setGlobalViewBox() {
+        let box = this.svg.viewBox.baseVal
+
+        const objectWidth = box.width
+        const objectHeight = box.height
+
+        const boundaryLength = Math.max(objectWidth, objectHeight) * 2
+
+        const globalX = -(boundaryLength - objectWidth) / 2
+        const globalY = -(boundaryLength - objectHeight) / 2
+
+        let x, y, width, height
+
+        if (this.workspace.offsetWidth >= this.workspace.offsetHeight) {
+            width = boundaryLength;
+            height = boundaryLength * this.workspace.offsetHeight / this.workspace.offsetWidth
+            x = globalX
+            y = globalY + (boundaryLength - height) / 2
+        } else {
+            height = boundaryLength
+            width = boundaryLength * this.workspace.offsetWidth / this.workspace.offsetHeight
+            y = globalY
+            x = globalX + (boundaryLength - width) / 2
+        }
+
+        this.svg.setAttribute("viewBox",
+            x + " " +
+            y + " " +
+            width + " " +
+            height
+        )
+
+        this.globalViewBox = {
+            x: globalX,
+            y: globalY,
+            left: globalX,
+            top: globalY,
+            width: boundaryLength,
+            height: boundaryLength,
+            maxWidth: width,
+            maxHeight: height
+        }
+    }
+
+    clampMoveX(v) {
+        const globalLeft = this.globalViewBox.left
+        const globalWidth = this.globalViewBox.width
+        const maxWidth = this.globalViewBox.maxWidth
+
+        if (v < globalLeft) {
+            return globalLeft;
+        }
+
+        let right = globalLeft + globalWidth - this.currentScale * maxWidth
+        if (v > right) {
+            return right
+        }
+
+        return v
+    }
+
+    clampMoveY(v) {
+        const globalTop = this.globalViewBox.top
+        const globalHeight = this.globalViewBox.height
+        const maxHeight = this.globalViewBox.maxHeight
+
+        if (v < globalTop) {
+            return globalTop
+        }
+
+        let bottom = globalTop + globalHeight - this.currentScale * maxHeight
+        if (v > bottom) {
+            return bottom
+        }
+
+        return v
+    }
+
+    clampScale(v) {
+        return Math.min(this.maxScale, Math.max(this.minScale, v))
+    }
+
+    move(signDx, signDy) {
+        let box = this.svg.viewBox.baseVal
+        this.svg.setAttribute(
+            "viewBox",
+            this.clampMoveX(box.x + this.OnKeyMoveX * signDx) + " " +
+            this.clampMoveY(box.y + this.OnKeyMoveY * signDy) + " " +
+            box.width + " " +
+            box.height)
+    }
+
+    scale(sign, px, py) {
+        let box = this.svg.viewBox.baseVal
+        if (this.currentScale <= this.minScale && sign < 0) {
+            return
+        }
+
+        if (this.currentScale >= this.maxScale && sign > 0) {
+            return
+        }
+
+        let cbox = this.workspace.getBoundingClientRect();
+        if (typeof (px) == "undefined") {
+            px = (cbox.left + cbox.right) / 2;
+        } else {
+            px -= cbox.left;
+        }
+
+        if (typeof (py) == "undefined") {
+            py = (cbox.top + cbox.bottom) / 2;
+        } else {
+            py -= cbox.top;
+        }
+
+
+        let old_width = box.width
+        let old_height = box.height
+        let old_scale = this.currentScale
+        this.currentScale = this.clampScale(this.currentScale + this.OnKeyScale * sign)
+        let new_width = old_width / old_scale * this.currentScale
+        let new_height = old_height / old_scale * this.currentScale
+
+        const pos_x =  px / (cbox.right - cbox.left)
+        const pos_y = py / (cbox.bottom - cbox.top)
+        let dx = (old_width - new_width) * pos_x
+        let dy = (old_height - new_height) * pos_y
+
+        this.svg.setAttribute(
+            "viewBox",
+            this.clampMoveX(box.x + dx) + " " +
+            this.clampMoveY(box.y + dy) + " " +
+            new_width + " " +
+            new_height
+        )
+    }
+
+    keydownListener(ev) {
+        if (this.mouseDown) {
+            return
+        }
+        switch (ev.key) {
+            case "Down":
+            case "ArrowDown":
+                this.move(0, 1)
+                break
+            case "Up":
+            case "ArrowUp":
+                this.move(0, -1)
+                break
+            case "Left":
+            case "ArrowLeft":
+                this.move(-1, 0)
+                break
+            case "Right":
+            case "ArrowRight":
+                this.move(1, 0)
+                break
+            case "-":
+                this.scale(1)
+                break
+            case "=":
+            case "+":
+                this.scale(-1)
+                break
+        }
+    }
+
+    wheelListener(ev) {
+        if (this.mouseDown) {
+            return
+        }
+        this.scale(Math.sign(ev.deltaY), ev.clientX, ev.clientY);
+    }
+
+    clientToSvg(x, y) {
+        const box = this.svg.viewBox.baseVal
+        const cbox = this.workspace.getBoundingClientRect()
+
+        const px = x - cbox.left
+        const py = y - cbox.top
+
+        return {
+            x: box.x + box.width * px / (cbox.right - cbox.left),
+            y: box.y + box.height * py / (cbox.bottom - cbox.top)
+        }
+    }
+
+    mousedownListener(ev) {
+        if (!ev.shiftKey) {
+            this.mouseDown = true;
+            this.fixedPoint = this.clientToSvg(ev.clientX, ev.clientY)
+        }
+    }
+
+    mouseupListener(ev) {
+        this.mouseDown = false;
+    }
+
+    mousemoveListener(ev) {
+        if (!this.mouseDown) {
+            return
+
+        }
+
+        let box = this.svg.viewBox.baseVal
+
+        const current = this.clientToSvg(ev.clientX, ev.clientY)
+
+        let dx = current.x - this.fixedPoint.x
+        let dy = current.y - this.fixedPoint.y
+
+        this.svg.setAttribute(
+            "viewBox",
+            this.clampMoveX(box.x - dx) + " " +
+            this.clampMoveY(box.y - dy) + " " +
+            box.width + " " +
+            box.height
+        )
+    }
 }
 
-applyOffset()
-
-const global_left = svg.viewBox.baseVal.x
-const global_top = svg.viewBox.baseVal.y
-const global_width = svg.viewBox.baseVal.width
-const global_height = svg.viewBox.baseVal.height
-
-const onkey_move_x = global_width / 20
-const onkey_move_y = global_height / 20
-const onkey_scale = 0.2
-
-const min_scale = 0.2;
-const max_scale = 1;
-
-let current_scale = 1;
-let mouse_down = false;
-let mouse_position = null;
-
-function clamp_move_x(v) {
-    if (v < global_left) {
-        return global_left;
-    }
-
-    let right = global_left + (1 - current_scale) * global_width
-    if (v > right) {
-        return right
-    }
-
-    return v
+for (const ws of document.querySelectorAll(".workspace")) {
+    new ViewBoxController(ws)
 }
-
-function clamp_move_y(v) {
-    if (v < global_top) {
-        return global_top
-    }
-
-    let bottom = global_top + (1 - current_scale) * global_height
-    if (v > bottom) {
-        return bottom
-    }
-
-    return v
-}
-
-function clamp_scale(v) {
-    return Math.max(Math.min(max_scale, v), min_scale)
-}
-
-function move(sign_dx, sign_dy) {
-    let box = svg.viewBox.baseVal
-    svg.setAttribute(
-        "viewBox",
-        clamp_move_x(box.x + onkey_move_x * sign_dx) + " " +
-        clamp_move_y(box.y + onkey_move_y * sign_dy) + " " +
-        box.width + " " +
-        box.height)
-}
-
-function scale(sign, px, py) {
-    let box = svg.viewBox.baseVal
-    if (current_scale <= min_scale && sign < 0) {
-        return
-    }
-
-    if (current_scale >= max_scale && sign > 0) {
-        return
-    }
-
-    let cbox = workspace.getBoundingClientRect();
-    if (typeof (px) == "undefined") {
-        px = (cbox.left + cbox.right) / 2;
-    } else {
-        px -= cbox.left;
-    }
-
-    if (typeof (py) == "undefined") {
-        py = (cbox.top + cbox.bottom) / 2;
-    } else {
-        py -= cbox.top;
-    }
-
-
-    let old_width = global_width * current_scale
-    let old_height = global_height * current_scale
-    let old_scale = current_scale
-    current_scale = clamp_scale(current_scale + onkey_scale * sign)
-    let new_width = global_width * current_scale
-    let new_height = global_height * current_scale
-
-    let scaler = current_scale / old_scale
-
-    let dx, dy;
-    if (sign < 0) {
-        dx = px * (1 / scaler - 1) * new_width / (cbox.right - cbox.left)
-        dy = py * (1 / scaler - 1) * new_height / (cbox.bottom - cbox.top)
-    } else {
-        dx = -(scaler - 1) * px * old_width / (cbox.right - cbox.left)
-        dy = -(scaler - 1) * py * old_height / (cbox.bottom - cbox.top)
-    }
-    svg.setAttribute(
-        "viewBox",
-        clamp_move_x(box.x + dx) + " " +
-        clamp_move_y(box.y + dy) + " " +
-        new_width + " " +
-        new_height
-    )
-}
-
-addEventListener("keydown", (event) => {
-    if (mouse_down) {
-        return
-    }
-    switch (event.key) {
-        case "Down":
-        case "ArrowDown":
-            move(0, 1)
-            break
-        case "Up":
-        case "ArrowUp":
-            move(0, -1)
-            break
-        case "Left":
-        case "ArrowLeft":
-            move(-1, 0)
-            break
-        case "Right":
-        case "ArrowRight":
-            move(1, 0)
-            break
-        case "-":
-            scale(1)
-            break
-        case "=":
-        case "+":
-            scale(-1)
-            break
-    }
-})
-
-addEventListener("wheel", (event) => {  // scaling viewBox using mouse wheel
-    if (mouse_down) {
-        return
-    }
-    scale(Math.sign(event.deltaY), event.clientX, event.clientY);
-})
-
-addEventListener("mousedown", (event) => {
-
-    if (event.button === 0 && !event.shiftKey) {
-        mouse_down = true;
-        mouse_position = {x: event.clientX, y: event.clientY}
-    }
-})
-
-addEventListener("mouseup", (event) => {
-
-    if (event.button === 0) {
-        mouse_down = false;
-    }
-})
-
-addEventListener("mousemove", (event) => {  // move viewBox using mouse drag
-
-    if (!mouse_down) {
-        return
-
-    }
-
-    let box = svg.viewBox.baseVal
-    let cbox = workspace.getBoundingClientRect();
-
-    let new_width = global_width * current_scale
-    let new_height = global_height * current_scale
-
-    let x_cords_transformer = new_width / (cbox.right - cbox.left)
-    let y_cords_transformer = new_height / (cbox.bottom - cbox.top)
-
-    // При движении по горизонтали появляется люфт - и я не имею ни малейшего понятия, почему
-    // Чтобы это исправить, сдвиг умножается на эмпирически выведенное нечто - скорее всего, не на всех устройствах будет работать((
-    let dx = (event.clientX - mouse_position.x) * x_cords_transformer * 1.46
-    let dy = (event.clientY - mouse_position.y) * y_cords_transformer
-
-    svg.setAttribute(
-        "viewBox",
-        clamp_move_x(box.x - dx) + " " +
-        clamp_move_y(box.y - dy) + " " +
-        box.width + " " +
-        box.height
-    )
-    mouse_position = {x: event.clientX, y: event.clientY}
-})
-
 

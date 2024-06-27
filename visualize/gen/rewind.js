@@ -1,29 +1,29 @@
-let pn_events;
+let pnEvents;
 let current;
 let max;
 
-const restart_button = document.querySelector("#restart")
-const previous_button = document.querySelector("#previous")
-const next_button = document.querySelector("#next")
-const skip_button = document.querySelector("#skip")
+const restartButton = document.querySelector("#restart")
+const previousButton = document.querySelector("#previous")
+const nextButton = document.querySelector("#next")
+const skipButton = document.querySelector("#skip")
 
-function check_availability() {
-    restart_button.disabled = current <= 0
-    previous_button.disabled = current <= 0
-    next_button.disabled = current >= max
-    skip_button.disabled = current >= max
+function checkAvailability() {
+    restartButton.disabled = current <= 0
+    previousButton.disabled = current <= 0
+    nextButton.disabled = current >= max
+    skipButton.disabled = current >= max
 }
 
 function hide(i) {
-    const to_hide = document.querySelectorAll(".hide-" + pn_events[i])
-    for (let el of to_hide) {
+    const toHide = document.querySelectorAll(".hide-" + pnEvents[i])
+    for (let el of toHide) {
         el.setAttribute("visibility", "hidden")
     }
 }
 
 function reveal(i) {
-    const to_reveal = document.querySelectorAll(".hide-" + pn_events[i])
-    for (let el of to_reveal) {
+    const toReveal = document.querySelectorAll(".hide-" + pnEvents[i])
+    for (let el of toReveal) {
         el.setAttribute("visibility", "visible")
     }
 }
@@ -32,7 +32,7 @@ function restart() {
     for (; current > 0; --current) {
         hide(current - 1)
     }
-    check_availability()
+    checkAvailability()
 }
 
 function previous() {
@@ -40,7 +40,7 @@ function previous() {
         return
     }
     hide(--current)
-    check_availability()
+    checkAvailability()
 }
 
 function next() {
@@ -48,14 +48,14 @@ function next() {
         return
     }
     reveal(current++)
-    check_availability()
+    checkAvailability()
 }
 
 function skip() {
     for (; current < max; ++current) {
         reveal(current)
     }
-    check_availability()
+    checkAvailability()
 }
 
 fetch("events.json").then(response => {
@@ -67,13 +67,13 @@ fetch("events.json").then(response => {
     if (!Array.isArray(json["events"])) {
         throw new Error("Invalid json")
     }
-    pn_events = json["events"]
-    current = max = pn_events.length
+    pnEvents = json["events"]
+    current = max = pnEvents.length
 
-    restart_button.addEventListener("click", restart)
-    previous_button.addEventListener("click", previous)
-    next_button.addEventListener("click", next)
-    skip_button.addEventListener("click", skip)
+    restartButton.addEventListener("click", restart)
+    previousButton.addEventListener("click", previous)
+    nextButton.addEventListener("click", next)
+    skipButton.addEventListener("click", skip)
 
-    check_availability()
+    checkAvailability()
 })

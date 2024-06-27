@@ -8,30 +8,38 @@
     <link rel="stylesheet" type="text/css" href="side_page.css">
 </head>
 <body>
-<div id="workspace">
+<div class="workspace" id="prefix-analysis" tabindex="-1">
     <!--REPLACE ME-->
 </div>
 </body>
 <div id="top-bar">
     <div style="flex: 1"></div>
     <div id="top-bar-buttons">
-        <button id="restart" disabled>
+        <button id="restart" class="top-bar-element" disabled>
             <img src="restart.svg" alt="Restart">
         </button>
-        <button id="previous" disabled>
+        <button id="previous" class="top-bar-element" disabled>
             <img src="previous.svg" alt="Previous">
         </button>
-        <button id="next" disabled>
+        <button id="next" class="top-bar-element" disabled>
             <img src="next.svg" alt="Next">
         </button>
-        <button id="skip" disabled>
+        <button id="skip" class="top-bar-element" disabled>
             <img src="skip.svg" alt="Skip">
         </button>
     </div>
     <div style="flex: 1"></div>
+    <div id="help-menu-button" class="top-bar-element">
+        ?
+        <div id="help-menu">
+            <p>Перемещение: клавиши-стрелки ИЛИ лкм + движение мышью</p>
+            <p>Масштаб: клавиши +/- ИЛИ колесико мыши</p>
+            <p>Анализ отношений: Shift + лкм по любому элементу сети</p>
+        </div>
+    </div>
 </div>
 <div id="side-page">
-    <button id="back" onclick="document.querySelector('#side-page').style.left = '-400px'; clear_fill()">
+    <button id="back" onclick="document.querySelector('#side-page').style.left = '-400px'; clearFill()">
         <img src="back.svg" alt="Back">
     </button>
     <div id="legend">

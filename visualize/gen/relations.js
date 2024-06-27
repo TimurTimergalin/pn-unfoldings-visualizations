@@ -1,12 +1,12 @@
 let prefix;
 
-const selected_color = "#fffea3"
-const precede_color = "#d0bbff"
-const follow_color = "#fab0e4"
-const conflict_color = "#ff5751"
-const concurrent_color = "#8de5a1"
+const selectedColor = "#fffea3"
+const precedeColor = "#d0bbff"
+const followColor = "#fab0e4"
+const conflictColor = "#ff5751"
+const concurrentColor = "#8de5a1"
 
-function set_after(id, met, color) {
+function setAfter(id, met, color) {
     if (met.has(id)) {
         return
     }
@@ -15,38 +15,38 @@ function set_after(id, met, color) {
     fill.setAttribute("fill", color)
     const cur = prefix.get(id)
     for (let node of cur.postset) {
-        set_after(node, met, color)
+        setAfter(node, met, color)
     }
 }
 
-function set_precede(id, from, met) {
+function setPrecede(id, from, met) {
     if (met.has(id)) {
         return
     }
     met.add(id)
 
     const fill = document.querySelector(".fill-" + id)
-    fill.setAttribute("fill", precede_color)
+    fill.setAttribute("fill", precedeColor)
     const cur = prefix.get(id)
     if (cur.is_place) {
         for (let child of cur.postset) {
             if (child === from) {
                 continue
             }
-            set_after(child, met, conflict_color)
+            setAfter(child, met, conflictColor)
         }
     }
 
     for (let node of prefix.get(id).preset) {
-        set_precede(node, id, met)
+        setPrecede(node, id, met)
     }
 }
 
-function set_concurrent(met) {
+function setConcurrent(met) {
     for (let node of prefix.keys()) {
         if (!met.has(node)) {
             const fill = document.querySelector(".fill-" + node)
-            fill.setAttribute("fill", concurrent_color)
+            fill.setAttribute("fill", concurrentColor)
         }
     }
 }
@@ -54,22 +54,22 @@ function set_concurrent(met) {
 function set_selected(id) {
     let met = new Set()
     const fill = document.querySelector(".fill-" + id)
-    fill.setAttribute("fill", selected_color)
+    fill.setAttribute("fill", selectedColor)
 
     met.add(id)
     const cur = prefix.get(id)
     for (let child of cur.postset) {
-        set_after(child, met, follow_color)
+        setAfter(child, met, followColor)
     }
 
     for (let parent of cur.preset) {
-        set_precede(parent, id, met)
+        setPrecede(parent, id, met)
     }
 
-    set_concurrent(met)
+    setConcurrent(met)
 }
 
-function init_prefix(json) {
+function initPrefix(json) {
     prefix = new Map()
 
     for (let node of json.nodes) {
@@ -77,13 +77,13 @@ function init_prefix(json) {
     }
 }
 
-function on_node_click(id) {
-    const side_page = document.querySelector("#side-page")
-    side_page.style.left = 0
+function onNodeClick(id) {
+    const sidePage = document.querySelector("#side-page")
+    sidePage.style.left = 0
     set_selected(id)
 }
 
-function clear_fill() {
+function clearFill() {
     for (let node of prefix.keys()) {
         const fill = document.querySelector(".fill-" + node)
         fill.removeAttribute("fill")
@@ -96,13 +96,13 @@ fetch("prefix.json").then(response => {
     }
     return response.json()
 }).then(json => {
-    init_prefix(json)
+    initPrefix(json)
 
     for (let node of prefix.keys()) {
         const click = document.querySelector(".click-" + node)
         click.addEventListener("click", (e) => {
             if (e.shiftKey) {
-                on_node_click(node)
+                onNodeClick(node)
             }
         })
     }
