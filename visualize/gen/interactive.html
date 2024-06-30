@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="workspace.css">
     <link rel="stylesheet" type="text/css" href="interactive.css">
     <link rel="stylesheet" type="text/css" href="top_bar.css">
+    <link rel="stylesheet" type="text/css" href="select_mode.css">
 </head>
 <body>
 <div id="merged-workspace">
@@ -20,6 +21,13 @@
 </div>
 </div>
 <div id="top-bar">
+    <div class="top-bar-element" id="select-mode" tabindex="-1">
+        Интерактивный режим
+        <div id="select-mode-choices">
+            <p onclick="onModeSelected()">Интерактивный режим</p>
+            <p onclick="onModeSelected('analyze.html')">Анализ отношений</p>
+        </div>
+    </div>
     <div id="help-menu-button" class="top-bar-element">
         ?
         <div id="help-menu">
@@ -32,4 +40,5 @@
 </body>
 <script src="view_box_control.js"></script>
 <script src="interactive.js"></script>
+<script src="select_mode.js"></script>
 </html>

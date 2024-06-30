@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="ripple.css">
     <link rel="stylesheet" type="text/css" href="side_page.css">
     <link rel="stylesheet" type="text/css" href="analyze.css">
+    <link rel="stylesheet" type="text/css" href="select_mode.css">
 </head>
 <body>
 <div class="workspace" id="prefix-analysis" tabindex="-1">
@@ -15,6 +16,13 @@
 </div>
 </body>
 <div id="top-bar">
+    <div class="top-bar-element" id="select-mode" tabindex="-1">
+        Анализ отношений
+        <div id="select-mode-choices">
+            <p onclick="onModeSelected()">Анализ отношений</p>
+            <p onclick="onModeSelected('interactive.html')">Интерактивный режим</p>
+        </div>
+    </div>
     <div style="flex: 1"></div>
     <div id="top-bar-buttons">
         <button id="restart" class="top-bar-element" disabled>
@@ -56,4 +64,5 @@
 <script src="ripple.js"></script>
 <script src="rewind.js"></script>
 <script src="relations.js"></script>
+<script src="select_mode.js"></script>
 </html>

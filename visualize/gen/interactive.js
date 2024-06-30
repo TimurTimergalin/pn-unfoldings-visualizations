@@ -15,6 +15,8 @@ const activeEvents = new Set()
 const cancellableEvents = new Set()
 const firedEvents = new Set()
 
+const activeTransitions = new Map()
+
 function paintNode(id, color) {
     const node_el = document.querySelector("#node-" + id)
     node_el.setAttribute("fill", color)
@@ -122,26 +124,43 @@ function removeFromSlice(id) {
 
 function activateEvent(id) {
     activeEvents.add(id)
+
+    const transitionId = labelFunction.get(id)
+    activeTransitions.set(transitionId, (activeTransitions.get(transitionId) || 0) + 1)
+
     cancellableEvents.delete(id)
     paintNode(id, eventActivateColor)
-    const transitionId = labelFunction.get(id)
     paintNode(transitionId, eventActivateColor)
 }
 
 function deactivateEvent(id) {
-    activeEvents.delete(id)
+    const deactivated = activeEvents.delete(id)
+
+    const transitionId = labelFunction.get(id)
+    if (deactivated) {
+        activeTransitions.set(transitionId, activeTransitions.get(transitionId) - 1)
+    }
+
     cancellableEvents.delete(id)
     paintNode(id, defaultColor)
-    const transitionId = labelFunction.get(id)
-    paintNode(transitionId, defaultColor)
+    if (activeTransitions.get(transitionId) === 0) {
+        paintNode(transitionId, defaultColor)
+    }
 }
 
 function makeEventCancellable(id) {
-    activeEvents.delete(id)
+    const deactivated = activeEvents.delete(id)
+
+    const transitionId = labelFunction.get(id)
+    if (deactivated) {
+        activeTransitions.set(transitionId, activeTransitions.get(transitionId) - 1)
+    }
+
     cancellableEvents.add(id)
     paintNode(id, eventCancelColor)
-    const transitionId = labelFunction.get(id)
-    paintNode(transitionId, defaultColor)
+    if (activeTransitions.get(transitionId) === 0) {
+        paintNode(transitionId, defaultColor)
+    }
 }
 
 function init() {
