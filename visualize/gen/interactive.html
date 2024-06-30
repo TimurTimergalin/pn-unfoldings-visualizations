@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Интерактивный режим</title>
+    <link rel="stylesheet" type="text/css" href="workspace.css">
+    <link rel="stylesheet" type="text/css" href="interactive.css">
+    <link rel="stylesheet" type="text/css" href="top_bar.css">
+</head>
+<body>
+<div id="merged-workspace">
+    <div class="workspace" id="prefix" tabindex="-1">
+    <!--REPLACE ME 1-->
+</div>
+<div id="workspace-sep">
+
+</div>
+<div class="workspace" id="original-net" tabindex="-1">
+    <!--REPLACE ME 2-->
+</div>
+</div>
+<div id="top-bar">
+    <div id="help-menu-button" class="top-bar-element">
+        ?
+        <div id="help-menu">
+            <p>Перемещение: клавиши-стрелки ИЛИ лкм + движение мышью</p>
+            <p>Масштаб: клавиши +/- ИЛИ колесико мыши</p>
+            <p>Срабатывание/отмена перехода: Shift + лкм по выделенному переходу</p>
+        </div>
+    </div>
+</div>
+</body>
+<script src="view_box_control.js"></script>
+<script src="interactive.js"></script>
+</html>

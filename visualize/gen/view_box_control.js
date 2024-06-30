@@ -9,23 +9,23 @@ class ViewBoxController {
     fixedPoint = null
 
     get minScale() {
-        return 0.1
+        return Number.MIN_VALUE
     }
 
     get maxScale() {
         return 1
     }
 
-    get OnKeyMoveX() {
+    get onKeyMoveX() {
         return this.globalViewBox.width / 20
     }
 
-    get OnKeyMoveY() {
+    get onKeyMoveY() {
         return this.globalViewBox.height / 20
     }
 
-    get OnKeyScale() {
-        return 0.1
+    get onKeyScale() {
+        return 0.8
     }
 
     constructor(workspace) {
@@ -144,8 +144,8 @@ class ViewBoxController {
         let box = this.svg.viewBox.baseVal
         this.svg.setAttribute(
             "viewBox",
-            this.clampMoveX(box.x + this.OnKeyMoveX * signDx) + " " +
-            this.clampMoveY(box.y + this.OnKeyMoveY * signDy) + " " +
+            this.clampMoveX(box.x + this.onKeyMoveX * signDx) + " " +
+            this.clampMoveY(box.y + this.onKeyMoveY * signDy) + " " +
             box.width + " " +
             box.height)
     }
@@ -162,13 +162,13 @@ class ViewBoxController {
 
         let cbox = this.workspace.getBoundingClientRect();
         if (typeof (px) == "undefined") {
-            px = (cbox.left + cbox.right) / 2;
+            px = (-cbox.left + cbox.right) / 2;
         } else {
             px -= cbox.left;
         }
 
         if (typeof (py) == "undefined") {
-            py = (cbox.top + cbox.bottom) / 2;
+            py = (-cbox.top + cbox.bottom) / 2;
         } else {
             py -= cbox.top;
         }
@@ -177,7 +177,8 @@ class ViewBoxController {
         let old_width = box.width
         let old_height = box.height
         let old_scale = this.currentScale
-        this.currentScale = this.clampScale(this.currentScale + this.OnKeyScale * sign)
+        let scaler = sign < 0 ? this.onKeyScale : 1 / this.onKeyScale
+        this.currentScale = this.clampScale(this.currentScale * scaler)
         let new_width = old_width / old_scale * this.currentScale
         let new_height = old_height / old_scale * this.currentScale
 

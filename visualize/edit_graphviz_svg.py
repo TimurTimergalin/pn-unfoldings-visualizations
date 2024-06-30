@@ -3,7 +3,7 @@ from pm4py.objects.petri_net.obj import PetriNet
 from pm4py.objects.petri_net.utils import petri_utils
 
 
-def edit_graphvis_svg(filename, pn_dict):
+def edit_graphvis_svg_analyze(filename, pn_dict):
     with open(filename, encoding="utf-8") as f:
         contents = f.read()
 
@@ -11,8 +11,8 @@ def edit_graphvis_svg(filename, pn_dict):
     svg = soup.svg
     svg.attrs["width"] = "100%"
     svg.attrs["height"] = "100%"
-    svg.attrs["id"] = "prefix"
     graph = svg.g  # Группа с графом
+    graph.title.extract()
 
     gs = graph.find_all("g")
 
@@ -54,5 +54,89 @@ def edit_graphvis_svg(filename, pn_dict):
                 hide.attrs["class"] = f"hide-{to}"
 
         g.title.extract()
+
+    return soup.prettify()
+
+
+def edit_graphviz_prefix_svg_interactive(filename):
+    with open(filename, encoding="utf-8") as f:
+        contents = f.read()
+
+    soup = BeautifulSoup(contents, "xml")
+    svg = soup.svg
+    svg.attrs["width"] = "100%"
+    svg.attrs["height"] = "100%"
+    graph = svg.g  # Группа с графом
+    graph.title.extract()
+
+    gs = graph.find_all("g")
+
+    for g in gs:
+        if g["class"] != "node":
+            g.title.extract()
+            continue
+        id_ = int(g.title.string)
+        g.title.extract()
+        g.attrs["id"] = f"node-{id_}"
+        g.attrs["fill"] = "white"
+
+        text = g.find("text")
+        if text is not None:
+            text.attrs["fill"] = "black"
+
+        shape = g.ellipse or g.polygon
+        if "fill" in shape.attrs:
+            del shape.attrs["fill"]
+
+    return soup.prettify()
+
+
+def edit_graphviz_original_net_svg_interactive(filename):
+    with open(filename, encoding="utf-8") as f:
+        contents = f.read()
+
+    soup = BeautifulSoup(contents, "xml")
+    svg = soup.svg
+    svg.attrs["width"] = "100%"
+    svg.attrs["height"] = "100%"
+    graph = svg.g  # Группа с графом
+    graph.title.extract()
+
+    gs = graph.find_all("g")
+
+    for g in gs:
+        if g["class"] != "node":
+            g.title.extract()
+            continue
+        id_ = int(g.title.string)
+        g.title.extract()
+        g.attrs["id"] = f"node-{id_}"
+
+        shape = g.ellipse or g.polygon
+        if "fill" in shape.attrs:
+            del shape.attrs["fill"]
+        g.attrs["fill"] = "white"
+
+        text = g.find("text")
+        if text is not None:
+            text.attrs["fill"] = "black"
+
+        shape = g.ellipse
+        if shape is None:
+            continue
+
+        text = g.find("text")
+        if text is None:
+            text = soup.new_tag("text")
+            g.append(text)
+
+        text.attrs["x"] = shape.attrs["cx"]
+        # С +3 выглядит просто красивее
+        # (почему именно столько - неизвестно)
+        text.attrs["y"] = str(float(shape.attrs["cy"]) + 3)
+        text.attrs["text-anchor"] = "middle"
+        text.attrs["alignment-baseline"] = "middle"
+        text.attrs["fill"] = "black"
+        text.clear()
 
     return soup.prettify()

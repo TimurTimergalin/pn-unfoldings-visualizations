@@ -108,6 +108,3 @@ fetch("prefix.json").then(response => {
     }
 })
 
-window.oncontextmenu = function () {
-    return false
-}
