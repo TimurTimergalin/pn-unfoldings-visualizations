@@ -15,3 +15,8 @@
     width: 15px;
     background-color: #bfa3a1;
 }
+
+.node:hover, .node.active {
+    stroke: #ff5751;
+    stroke-width: 5px;
+}

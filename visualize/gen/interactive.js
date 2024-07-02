@@ -1,9 +1,8 @@
-let prefix;
-let markers;
-let labelFunction;
-let originalNet;
-let filesFetched = 0;
-const totalDocuments = 4
+let prefix
+let markers
+let labelFunction
+let filesFetched = 0
+const totalDocuments = 3
 
 const conditionColor = "#d0bbff"
 const eventActivateColor = "#8de5a1"
@@ -276,19 +275,37 @@ function cancelEvent(id) {
 function setEventListeners() {
     for (const nodeId of prefix.keys()) {
         const nodeObj = prefix.get(nodeId)
-        if (nodeObj.is_place) {
-            continue
+        const nodeEl = document.querySelector("#node-" + nodeId)
+
+        if (!nodeObj.is_place) {
+            nodeEl.addEventListener("click", e => {
+                if (e.shiftKey) {
+                    if (activeEvents.has(nodeId)) {
+                        fireEvent(nodeId)
+                    } else if (cancellableEvents.has(nodeId)) {
+                        cancelEvent(nodeId)
+                    }
+                }
+            })
         }
 
-        const nodeEl = document.querySelector("#node-" + nodeId)
-        nodeEl.addEventListener("click", e => {
-            if (e.shiftKey) {
-                if (activeEvents.has(nodeId)) {
-                    fireEvent(nodeId)
-                } else if (cancellableEvents.has(nodeId)) {
-                    cancelEvent(nodeId)
-                }
-            }
+        const activeClass = "active"
+        const label = labelFunction.get(nodeId)
+        const labelEl = document.querySelector("#node-" + label)
+        nodeEl.addEventListener("mouseenter", () => {
+            labelEl.classList.add(activeClass)
+        })
+
+        nodeEl.addEventListener("mouseleave", () => {
+            labelEl.classList.remove(activeClass)
+        })
+
+        labelEl.addEventListener("mouseenter", () => {
+            nodeEl.classList.add(activeClass)
+        })
+
+        labelEl.addEventListener("mouseleave", () => {
+            nodeEl.classList.remove(activeClass)
         })
     }
 }
@@ -315,19 +332,10 @@ function initLabelFunction(json) {
     }
 }
 
-function initOriginalNet(json) {
-    originalNet = new Map()
-
-    for (const node of json.nodes) {
-        originalNet.set(node.id, node)
-    }
-}
-
 for (const [initFunc, filename] of [
     [initPrefix, "prefix.json"],
     [initMarkers, "markers.json"],
     [initLabelFunction, "label_function.json"],
-    [initOriginalNet, "original_net.json"]
 ]) {
     fetch(filename).then(response => {
         if (!response.ok) {

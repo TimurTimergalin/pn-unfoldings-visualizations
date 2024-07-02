@@ -79,14 +79,18 @@ def edit_graphviz_prefix_svg_interactive(filename):
         g.title.extract()
         g.attrs["id"] = f"node-{id_}"
         g.attrs["fill"] = "white"
+        g.attrs["stroke"] = "black"
 
         text = g.find("text")
         if text is not None:
             text.attrs["fill"] = "black"
+            text.attrs["stroke"] = "none"
 
         shape = g.ellipse or g.polygon
         if "fill" in shape.attrs:
             del shape.attrs["fill"]
+        if "stroke" in shape.attrs:
+            del shape.attrs["stroke"]
 
     return soup.prettify()
 
@@ -115,11 +119,15 @@ def edit_graphviz_original_net_svg_interactive(filename):
         shape = g.ellipse or g.polygon
         if "fill" in shape.attrs:
             del shape.attrs["fill"]
+        if "stroke" in shape.attrs:
+            del shape.attrs["stroke"]
         g.attrs["fill"] = "white"
+        g.attrs["stroke"] = "black"
 
         text = g.find("text")
         if text is not None:
             text.attrs["fill"] = "black"
+            text.attrs["stroke"] = "none"
 
         shape = g.ellipse
         if shape is None:
@@ -137,6 +145,7 @@ def edit_graphviz_original_net_svg_interactive(filename):
         text.attrs["text-anchor"] = "middle"
         text.attrs["alignment-baseline"] = "middle"
         text.attrs["fill"] = "black"
+        text.attrs["stroke"] = "none"
         text.clear()
 
     return soup.prettify()

@@ -9,7 +9,7 @@ from nets_generators import generate_dining_philosophers
 
 from visualize import visualize
 
-net, m0 = generate_dining_philosophers(3)
+net, m0 = generate_dining_philosophers(5)
 decorations = ColorsDecorations(
     LabelsDecorations.standard(),
     starting_conditions="#aaffaa",
@@ -20,7 +20,7 @@ events = []
 
 pr = standard_algorithm(net, m0, BasicOrderSettings(), MarkCutoffSettings(), decorations, order_of_adding=events)
 
-visualize(net, pr, events, decorations.get(), "df3")
+visualize(net, pr, events, decorations.get(), "df5")
 
 net = PetriNet("6-safe")
 p0 = petri_utils.add_place(net, "p0")
