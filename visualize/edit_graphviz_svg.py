@@ -58,7 +58,7 @@ def edit_graphvis_svg_analyze(filename, pn_dict):
     return soup.prettify()
 
 
-def edit_graphviz_prefix_svg_interactive(filename):
+def edit_graphviz_prefix_svg_interactive(filename, cutoff_events):
     with open(filename, encoding="utf-8") as f:
         contents = f.read()
 
@@ -83,7 +83,7 @@ def edit_graphviz_prefix_svg_interactive(filename):
 
         text = g.find("text")
         if text is not None:
-            text.attrs["fill"] = "black"
+            text.attrs["fill"] = "black" if id_ not in cutoff_events else "red"
             text.attrs["stroke"] = "none"
 
         shape = g.ellipse or g.polygon

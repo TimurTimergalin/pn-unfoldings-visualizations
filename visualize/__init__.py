@@ -21,7 +21,7 @@ def visualize(net, prefix, events, decorations, directory):
                                        )
     _, _, prefix_svg_analyze = edited.split("\n", 2)
 
-    edited = edit_graphviz_prefix_svg_interactive(svg_path)
+    edited = edit_graphviz_prefix_svg_interactive(svg_path, {id(x) for x in prefix.cutoff_events})
     _, _, prefix_svg_interactive = edited.split("\n", 2)
 
     os.remove(svg_path)
@@ -35,25 +35,15 @@ def visualize(net, prefix, events, decorations, directory):
     os.remove(svg_path)
 
     # Вставляем json
-    events_path = join(directory, "events.json")
-    with open(events_path, "w", encoding="utf-8") as f:
-        f.write(jsonify_addition_order(events))
-
-    markers_path = join(directory, "markers.json")
-    with open(markers_path, "w", encoding="utf-8") as f:
-        f.write(jsonify_condition_markers(prefix))
-
-    prefix_path = join(directory, "prefix.json")
-    with open(prefix_path, "w", encoding="utf-8") as f:
-        f.write(jsonify_net(prefix))
-
-    label_function_path = join(directory, "label_function.json")
-    with open(label_function_path, "w", encoding="utf-8") as f:
-        f.write(jsonify_label_function(prefix))
-
-    original_net_path = join(directory, "original_net.json")
-    with open(original_net_path, "w", encoding="utf-8") as f:
-        f.write(jsonify_net(net))
+    for json_path, jsonify_func, *args in [
+        ("events.json", jsonify_addition_order, events),
+        ("markers.json", jsonify_condition_markers, prefix),
+        ("prefix.json", jsonify_net, prefix),
+        ("label_function.json", jsonify_label_function, prefix),
+        ("original_net.json", jsonify_net, net),
+    ]:
+        with open(join(directory, json_path), "w", encoding="utf-8") as f:
+            f.write(jsonify_func(*args))
 
     # Добавляем файлы в целевую папку
     gen_dir = join(__file__, "..", "gen")
