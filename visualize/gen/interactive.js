@@ -1,13 +1,15 @@
 let prefix
 let markers
 let labelFunction
+let originalNet
 let filesFetched = 0
-const totalDocuments = 3
+const totalDocuments = 4
 
 const conditionColor = "#d0bbff"
 const eventActivateColor = "#8de5a1"
 const eventCancelColor = "#fffea3"
 const defaultColor = "#ffffff"
+const deadlockColor = "#ff5751"
 
 const slice = new Set()
 const activeEvents = new Set()
@@ -121,6 +123,28 @@ function removeFromSlice(id) {
     paintNode(id, defaultColor)
 }
 
+function checkDeadlock() {
+    if (activeEvents.size !== 0) {
+        return
+    }
+    for (const condition of slice) {
+        const place = labelFunction.get(condition)
+        const placeObj = originalNet.get(place)
+        if (placeObj.postset.length !== 0 && markers.get(condition) !== 0) {
+            for (const condition of slice) {
+                paintNode(condition, deadlockColor)
+            }
+            return;
+        }
+    }
+}
+
+function clearDeadlock() {
+    for (const condition of slice) {
+        paintNode(condition, conditionColor)
+    }
+}
+
 function activateEvent(id) {
     activeEvents.add(id)
 
@@ -215,6 +239,7 @@ function fireEvent(id) {
     }
 
     recalculateText(affectedConditions)
+    checkDeadlock()
 }
 
 function checkCancellable(id) {
@@ -234,6 +259,7 @@ function checkCancellable(id) {
 
 
 function cancelEvent(id) {
+    clearDeadlock()
     firedEvents.delete(id)
     const eventObj = prefix.get(id)
 
@@ -318,6 +344,14 @@ function initPrefix(json) {
     }
 }
 
+function initOriginalNet(json) {
+    originalNet = new Map()
+
+    for (const node of json.nodes) {
+        originalNet.set(node.id, node)
+    }
+}
+
 function initMarkers(json) {
     markers = new Map()
     for (const node of json.nodes) {
@@ -336,6 +370,7 @@ for (const [initFunc, filename] of [
     [initPrefix, "prefix.json"],
     [initMarkers, "markers.json"],
     [initLabelFunction, "label_function.json"],
+    [initOriginalNet, "original_net.json"]
 ]) {
     fetch(filename).then(response => {
         if (!response.ok) {
