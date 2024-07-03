@@ -1,0 +1,13 @@
+.hint {
+    position: absolute;
+    visibility: hidden;
+    top: 100%;
+    background: #d1b1ae;
+    opacity: 0;
+    transition: opacity 400ms, visibility 0s;
+}
+
+.hint-container:hover .hint {
+    opacity: 1;
+    visibility: visible;
+}

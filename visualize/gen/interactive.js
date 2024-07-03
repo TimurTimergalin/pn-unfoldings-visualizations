@@ -18,6 +18,25 @@ const firedEvents = new Set()
 
 const activeTransitions = new Map()
 
+const eventSequence = []
+
+function setSequenceText() {
+    const res = []
+    for (const event of eventSequence) {
+        const node = document.querySelector("#node-" + event)
+        const text = node.querySelector("text").textContent.trim()
+        res.push(text)
+    }
+    const resText = res.join(" -> ")
+
+    const sequenceDisplay = document.querySelector("#sequence-display")
+    if (resText.length !== 0) {
+        sequenceDisplay.innerText = resText
+    } else {
+        sequenceDisplay.innerText = "Последовательность пуста"
+    }
+}
+
 function paintNode(id, color) {
     const node_el = document.querySelector("#node-" + id)
     node_el.setAttribute("fill", color)
@@ -187,6 +206,7 @@ function makeEventCancellable(id) {
 }
 
 function init() {
+    setSequenceText()
     const affectedConditions = new Set()
 
     for (const nodeId of prefix.keys()) {
@@ -206,6 +226,8 @@ function init() {
 
 function fireEvent(id) {
     firedEvents.add(id)
+    eventSequence.push(id)
+    setSequenceText()
     const eventObj = prefix.get(id)
 
     const affectedConditions = new Set()
@@ -261,6 +283,13 @@ function checkCancellable(id) {
 function cancelEvent(id) {
     clearDeadlock()
     firedEvents.delete(id)
+    eventSequence.splice(
+        eventSequence.findIndex(e => {
+            return e === id
+        }), 1
+    )
+    setSequenceText()
+
     const eventObj = prefix.get(id)
 
     const affectedConditions = new Set()
@@ -298,6 +327,24 @@ function cancelEvent(id) {
     recalculateText(affectedConditions)
 }
 
+function reset() {
+    for (const node of prefix.keys()) {
+        paintNode(node, defaultColor)
+    }
+
+    for (const node of originalNet.keys()) {
+        paintNode(node, defaultColor)
+    }
+    slice.clear()
+    activeEvents.clear()
+    cancellableEvents.clear()
+    firedEvents.clear()
+    activeTransitions.clear()
+    eventSequence.splice(0)
+
+    init()
+}
+
 function setEventListeners() {
     for (const nodeId of prefix.keys()) {
         const nodeObj = prefix.get(nodeId)
@@ -332,6 +379,11 @@ function setEventListeners() {
 
         labelEl.addEventListener("mouseleave", () => {
             nodeEl.classList.remove(activeClass)
+        })
+
+        const resetButton = document.querySelector("#reset")
+        resetButton.addEventListener("click", (e) => {
+            reset()
         })
     }
 }

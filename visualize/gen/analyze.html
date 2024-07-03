@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="side_page.css">
     <link rel="stylesheet" type="text/css" href="analyze.css">
     <link rel="stylesheet" type="text/css" href="select_mode.css">
+    <link rel="stylesheet" type="text/css" href="hint.css">
 </head>
 <body>
 <div class="workspace" id="prefix-analysis" tabindex="-1">
@@ -23,25 +24,23 @@
             <p onclick="onModeSelected('interactive.html')">Интерактивный режим</p>
         </div>
     </div>
-    <div style="flex: 1"></div>
     <div id="top-bar-buttons">
-        <button id="restart" class="top-bar-element" disabled>
+        <button id="restart" class="top-bar-element top-bar-button" disabled>
             <img src="restart.svg" alt="Restart">
         </button>
-        <button id="previous" class="top-bar-element" disabled>
+        <button id="previous" class="top-bar-element top-bar-button" disabled>
             <img src="previous.svg" alt="Previous">
         </button>
-        <button id="next" class="top-bar-element" disabled>
+        <button id="next" class="top-bar-element top-bar-button" disabled>
             <img src="next.svg" alt="Next">
         </button>
-        <button id="skip" class="top-bar-element" disabled>
+        <button id="skip" class="top-bar-element top-bar-button" disabled>
             <img src="skip.svg" alt="Skip">
         </button>
     </div>
-    <div style="flex: 1"></div>
-    <div id="help-menu-button" class="top-bar-element">
+    <div id="help-menu-button" class="top-bar-element hint-container">
         ?
-        <div id="help-menu">
+        <div id="help-menu" class="hint">
             <p>Перемещение: клавиши-стрелки ИЛИ лкм + движение мышью</p>
             <p>Масштаб: клавиши +/- ИЛИ колесико мыши</p>
             <p>Анализ отношений: Shift + лкм по любому элементу сети</p>

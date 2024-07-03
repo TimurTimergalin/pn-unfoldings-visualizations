@@ -7,6 +7,8 @@
     <link rel="stylesheet" type="text/css" href="interactive.css">
     <link rel="stylesheet" type="text/css" href="top_bar.css">
     <link rel="stylesheet" type="text/css" href="select_mode.css">
+    <link rel="stylesheet" type="text/css" href="hint.css">
+    <link rel="stylesheet" type="text/css" href="ripple.css">
 </head>
 <body>
 <div id="merged-workspace">
@@ -28,9 +30,20 @@
             <p onclick="onModeSelected('analyze.html')">Анализ отношений</p>
         </div>
     </div>
-    <div id="help-menu-button" class="top-bar-element">
+    <div id="top-bar-buttons">
+        <button id="reset" class="top-bar-element top-bar-button">
+            <img src="reset.svg" alt="Reset" style="height: 65%">
+        </button>
+        <div id="sequence" class="top-bar-element top-bar-button hint-container">
+            <img src="sequence.svg" alt="Sequence">
+            <div id="sequence-display" class="hint">
+                Последовательность пуста
+            </div>
+        </div>
+    </div>
+    <div id="help-menu-button" class="top-bar-element hint-container">
         ?
-        <div id="help-menu">
+        <div id="help-menu" class="hint">
             <p>Перемещение: клавиши-стрелки ИЛИ лкм + движение мышью</p>
             <p>Масштаб: клавиши +/- ИЛИ колесико мыши</p>
             <p>Срабатывание/отмена перехода: Shift + лкм по выделенному переходу</p>
@@ -41,4 +54,5 @@
 <script src="view_box_control.js"></script>
 <script src="interactive.js"></script>
 <script src="select_mode.js"></script>
+<script src="ripple.js"></script>
 </html>

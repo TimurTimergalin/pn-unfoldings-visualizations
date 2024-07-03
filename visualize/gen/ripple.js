@@ -19,7 +19,7 @@ function createRipple(event) {
   button.appendChild(circle);
 }
 
-const buttons = document.querySelectorAll("#top-bar-buttons button")
+const buttons = document.querySelectorAll("#top-bar-buttons button.top-bar-button")
 for (const button of buttons) {
   button.addEventListener("click", createRipple);
 }
