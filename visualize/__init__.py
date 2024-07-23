@@ -10,6 +10,14 @@ from .jsonify import jsonify_addition_order, jsonify_net, jsonify_condition_mark
 
 
 def visualize(net, prefix, events, decorations, directory):
+    """
+    Генерирует веб-документ с визуализацией развертки сети Петри
+    :param net: сеть Петри
+    :param prefix: развертка сети net
+    :param events: iterable с id событий развертки в том порядке, в котором они были добавлены
+    :param decorations: декорации для изображения сети
+    :param directory: папка, в которой будут созданы все файлы. Если папки не существует, она будет создана
+    """
     os.makedirs(directory, exist_ok=True)
 
     # Обрабатываем svg
