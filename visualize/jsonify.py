@@ -55,3 +55,13 @@ def jsonify_net(pr):
     }
 
     return json.dumps(to_jsonify)
+
+
+def jsonify_cutoff_events(pr):
+    to_jsonify = {
+        "events": [
+            id(x) for x in pr.cutoff_events
+        ]
+    }
+
+    return json.dumps(to_jsonify)

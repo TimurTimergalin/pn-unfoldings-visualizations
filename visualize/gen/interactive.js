@@ -3,7 +3,8 @@ let markers
 let labelFunction
 let originalNet
 let filesFetched = 0
-const totalDocuments = 4
+let cutoff_events
+const totalDocuments = 5
 
 const conditionColor = "#d0bbff"
 const eventActivateColor = "#8de5a1"
@@ -146,17 +147,21 @@ function checkDeadlock() {
     if (activeEvents.size !== 0) {
         return
     }
+
     for (const condition of slice) {
-        const place = labelFunction.get(condition)
-        const placeObj = originalNet.get(place)
-        if (placeObj.postset.length !== 0 && markers.get(condition) !== 0) {
-            for (const condition of slice) {
-                paintNode(condition, deadlockColor)
+        const conditionObj = prefix.get(condition)
+        for (const event of conditionObj.preset) {
+            if (cutoff_events.has(event)) {
+                return;
             }
-            return;
         }
     }
+
+    for (const condition of slice) {
+        paintNode(condition, deadlockColor)
+    }
 }
+
 
 function clearDeadlock() {
     for (const condition of slice) {
@@ -327,6 +332,15 @@ function cancelEvent(id) {
     recalculateText(affectedConditions)
 }
 
+function clearPlacesText() {
+    for (const id of originalNet.keys()) {
+        const placeObj = originalNet.get(id)
+        if (placeObj.is_place) {
+            setText(id, "")
+        }
+    }
+}
+
 function reset() {
     for (const node of prefix.keys()) {
         paintNode(node, defaultColor)
@@ -341,6 +355,7 @@ function reset() {
     firedEvents.clear()
     activeTransitions.clear()
     eventSequence.splice(0)
+    clearPlacesText()
 
     init()
 }
@@ -380,12 +395,12 @@ function setEventListeners() {
         labelEl.addEventListener("mouseleave", () => {
             nodeEl.classList.remove(activeClass)
         })
-
-        const resetButton = document.querySelector("#reset")
-        resetButton.addEventListener("click", (e) => {
-            reset()
-        })
     }
+
+    const resetButton = document.querySelector("#reset")
+    resetButton.addEventListener("click", (e) => {
+        reset()
+    })
 }
 
 function initPrefix(json) {
@@ -418,11 +433,20 @@ function initLabelFunction(json) {
     }
 }
 
+function initCutoffEvents(json) {
+    cutoff_events = new Set()
+    for (const event of json.events) {
+        cutoff_events.add(event)
+    }
+}
+
+
 for (const [initFunc, filename] of [
     [initPrefix, "prefix.json"],
     [initMarkers, "markers.json"],
     [initLabelFunction, "label_function.json"],
-    [initOriginalNet, "original_net.json"]
+    [initOriginalNet, "original_net.json"],
+    [initCutoffEvents, "cutoff_events.json"]
 ]) {
     fetch(filename).then(response => {
         if (!response.ok) {

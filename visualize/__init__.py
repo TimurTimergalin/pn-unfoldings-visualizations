@@ -6,7 +6,7 @@ import pm4py
 from .edit_graphviz_svg import (edit_graphvis_svg_analyze, edit_graphviz_prefix_svg_interactive,
                                 edit_graphviz_original_net_svg_interactive)
 from .embed_svg import embed_svg
-from .jsonify import jsonify_addition_order, jsonify_net, jsonify_condition_markers, jsonify_label_function
+from .jsonify import *
 
 
 def visualize(net, prefix, events, decorations, directory):
@@ -49,6 +49,7 @@ def visualize(net, prefix, events, decorations, directory):
         ("prefix.json", jsonify_net, prefix),
         ("label_function.json", jsonify_label_function, prefix),
         ("original_net.json", jsonify_net, net),
+        ("cutoff_events.json", jsonify_cutoff_events, prefix)
     ]:
         with open(join(directory, json_path), "w", encoding="utf-8") as f:
             f.write(jsonify_func(*args))
