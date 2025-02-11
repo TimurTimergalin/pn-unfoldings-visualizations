@@ -1,10 +1,10 @@
 /* Workspace */
 #merged-workspace {
     position: absolute;
-    top: 100px;
+    top: 50px;
     left: 0;
     width: 100%;
-    height: calc(100% - 100px);
+    height: calc(100% - 50px);
     display: flex;
 }
 
@@ -13,8 +13,8 @@
 }
 
 #workspace-sep {
-    width: 15px;
-    background-color: #bfa3a1;
+    width: 10px;
+    background-color: #999;
 }
 
 .node:hover, .node.active {
@@ -24,7 +24,7 @@
 
 /* Top bar */
 #top-bar-buttons {
-    width: 250px;
+    width: 125px;
 }
 
 #sequence-display {

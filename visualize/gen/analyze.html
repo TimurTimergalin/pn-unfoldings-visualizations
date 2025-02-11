@@ -5,11 +5,11 @@
     <title>Анализ развертки</title>
     <link rel="stylesheet" type="text/css" href="workspace.css">
     <link rel="stylesheet" type="text/css" href="top_bar.css">
-    <link rel="stylesheet" type="text/css" href="ripple.css">
     <link rel="stylesheet" type="text/css" href="side_page.css">
     <link rel="stylesheet" type="text/css" href="analyze.css">
     <link rel="stylesheet" type="text/css" href="select_mode.css">
     <link rel="stylesheet" type="text/css" href="hint.css">
+    <link rel="stylesheet" type="text/css" href="main.css">
 </head>
 <body>
 <div class="workspace" id="prefix-analysis" tabindex="-1">
@@ -25,16 +25,16 @@
         </div>
     </div>
     <div id="top-bar-buttons">
-        <button id="restart" class="top-bar-element top-bar-button" disabled>
+        <button id="restart" class="top-bar-element top-bar-button" disabled type="button">
             <img src="restart.svg" alt="Restart">
         </button>
-        <button id="previous" class="top-bar-element top-bar-button" disabled>
+        <button id="previous" class="top-bar-element top-bar-button" disabled type="button">
             <img src="previous.svg" alt="Previous">
         </button>
-        <button id="next" class="top-bar-element top-bar-button" disabled>
+        <button id="next" class="top-bar-element top-bar-button" disabled type="button">
             <img src="next.svg" alt="Next">
         </button>
-        <button id="skip" class="top-bar-element top-bar-button" disabled>
+        <button id="skip" class="top-bar-element top-bar-button" disabled type="button">
             <img src="skip.svg" alt="Skip">
         </button>
     </div>
@@ -60,7 +60,6 @@
     </div>
 </div>
 <script src="view_box_control.js"></script>
-<script src="ripple.js"></script>
 <script src="rewind.js"></script>
 <script src="relations.js"></script>
 <script src="select_mode.js"></script>

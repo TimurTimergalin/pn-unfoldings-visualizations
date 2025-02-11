@@ -13,15 +13,15 @@ class ViewBoxController {
     }
 
     get maxScale() {
-        return 2
+        return 1
     }
 
     get onKeyMoveX() {
-        return this.globalViewBox.width / 20
+        return this.globalViewBox.width / 100
     }
 
     get onKeyMoveY() {
-        return this.globalViewBox.height / 20
+        return this.globalViewBox.height / 100
     }
 
     get onKeyScale() {
@@ -64,7 +64,7 @@ class ViewBoxController {
         const objectWidth = box.width
         const objectHeight = box.height
 
-        const boundaryLength = Math.max(objectWidth, objectHeight) * 4
+        const boundaryLength = Math.max(objectWidth, objectHeight) * 3
 
         const globalX = -(boundaryLength - objectWidth) / 2
         const globalY = -(boundaryLength - objectHeight) / 2

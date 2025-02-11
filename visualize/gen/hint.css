@@ -2,9 +2,8 @@
     position: absolute;
     visibility: hidden;
     top: 100%;
-    background: #d1b1ae;
+    background: #bbb;
     opacity: 0;
-    transition: opacity 400ms, visibility 0s;
 }
 
 .hint-container:hover .hint {

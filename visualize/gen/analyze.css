@@ -1,7 +1,7 @@
 /*workspace*/
 #prefix-analysis {
     width: 100%;
-    height: calc(100% - 100px);
+    height: calc(100% - 50px);
 
     position: absolute;
     top: 100px;
@@ -10,9 +10,9 @@
 
 /*top-bar*/
 #top-bar-buttons {
-    width: 500px;
+    width: 250px;
 }
 
 #top-bar-buttons button:disabled, #top-bar-buttons button[disabled] {
-    background-color: #bfa3a1;
+    background-color: #888;
 }

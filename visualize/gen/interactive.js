@@ -28,7 +28,7 @@ function setSequenceText() {
         const text = node.querySelector("text").textContent.trim()
         res.push(text)
     }
-    const resText = res.join(" -> ")
+    const resText = res.join(" → ")
 
     const sequenceDisplay = document.querySelector("#sequence-display")
     if (resText.length !== 0) {

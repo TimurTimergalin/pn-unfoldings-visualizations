@@ -5,15 +5,14 @@
 
     color: white;
     font-size: 25px;
-    font-family: "Times New Roman", serif;
 
     text-align: center;
     vertical-align: middle;
-    line-height: 100px;
+    line-height: 200%;
 }
 
 #select-mode:focus {
-    background-color: #d1b1ae;
+    background-color: #bbb;
 }
 
 #select-mode-choices {
@@ -25,7 +24,7 @@
     display: flex;
     flex-direction: column;
 
-    background-color: #e8c5c2;
+    background-color: #ccc;
     z-index: -1;
 }
 
@@ -42,5 +41,5 @@
 }
 
 #select-mode-choices p:hover {
-    background-color: #d1b1ae;
+    background-color: #bbb;
 }
