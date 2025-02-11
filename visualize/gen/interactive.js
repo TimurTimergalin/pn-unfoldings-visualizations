@@ -34,7 +34,7 @@ function setSequenceText() {
     if (resText.length !== 0) {
         sequenceDisplay.innerText = resText
     } else {
-        sequenceDisplay.innerText = "Последовательность пуста"
+        sequenceDisplay.innerText = "-"
     }
 }
 

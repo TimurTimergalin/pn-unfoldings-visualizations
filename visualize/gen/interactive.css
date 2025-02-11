@@ -40,4 +40,12 @@
     overflow-x: auto;
     color: white;
     font-size: 20px;
+    cursor: pointer;
+    min-width: 70px;
+    text-align: center;
+    user-select: none;
+}
+
+#sequence:active {
+    background-color: #bbb;
 }
